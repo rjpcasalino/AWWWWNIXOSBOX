@@ -32,4 +32,4 @@ This is a simple example of NixOS on EC2 via [OpenTofu](https://opentofu.org/doc
 6. `"aws_instance.nixos_box (local-exec): error: flake 'git+file:///etc/nixos' does not provide attribute..."`
 7. `"aws_instance.nixos_box (local-exec): ssh: Could not resolve hostname 2600... scp: Connection closed"`
 8. `"works! t4g.micro CANNOT build the system but could probably run it fine we need to figure that out..."`
-9. `"now provide a rough plan on how you'd spin up this EC2 instance as a cluster in EC2..."` 
+9. `"now provide a rough plan on how you'd spin up this EC2 instance as a cluster in ECS..."` 
