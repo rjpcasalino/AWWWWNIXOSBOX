@@ -78,6 +78,7 @@ resource "aws_instance" "nixos_box" {
 
       echo "Uploading configuration over SSH stream..."
       $SSH_CMD root@$IPV6_ADDR "mkdir -p /etc/nixos && cat > /etc/nixos/configuration.nix" < ./nixos/configuration.nix
+      $SSH_CMD root@$IPV6_ADDR "cat > /etc/nixos/letter.md" < ./nixos/letter.md
 
       echo "Building and applying NixOS configuration on target..."
       # Restrict Nix to 1 job and 1 core to prevent RAM spikes
