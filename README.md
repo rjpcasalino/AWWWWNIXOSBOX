@@ -1,6 +1,6 @@
 # AWWWWNIXOSBOX
 
-This is a simple example of NixOS on EC2 via [OpenTofu](https://opentofu.org/docs/cli/code).
+This is a simple example of NixOS on EC2 and ECS via [OpenTofu](https://opentofu.org/docs/cli/code).
 
 **AI Collaboration Overview**
 
