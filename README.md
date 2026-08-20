@@ -2,7 +2,7 @@
 
 This is a simple example of NixOS on EC2 and ECS via [OpenTofu](https://opentofu.org/docs/cli/code).
 
-The file at this level pertain to EC2. ECS IaC is under `ECS`; `nixos` has the config for the EC2 instance and contains some other random stuff.
+The files at the level of this README pertain to EC2. ECS IaC is under `ECS`; `nixos` has the config for the EC2 instance and contains some other random stuff.
 
 **AI Collaboration Overview**
 
