@@ -2,13 +2,13 @@
 # ==============================================================================
 # 1. Task Definition (Emulating t4g.medium: 2 vCPU / 4 GB RAM ARM64)
 # ==============================================================================
-
+# Update in app_medium to make it less than medium
 resource "aws_ecs_task_definition" "app_medium" {
   family                   = "nixos-web-app-medium"
   network_mode             = "awsvpc"
   requires_compatibilities = ["FARGATE"]
-  cpu                      = "2048"
-  memory                   = "4096"
+  cpu                      = "512"   # Adjusted down from 2048
+  memory                   = "1024"  # Adjusted down from 4096
   execution_role_arn       = aws_iam_role.ecs_execution_role.arn
 
   runtime_platform {

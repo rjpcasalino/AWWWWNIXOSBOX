@@ -1,0 +1,16 @@
+# Exclude the local cache directory (contains binary plugins and modules)
+.terraform/
+
+# Exclude local state files (use a remote backend like S3, GCS, or Terraform Cloud instead)
+*.tfstate
+*.tfstate.*
+
+# Exclude sensitive variable files
+*.tfvars
+*.tfvars.json
+
+# Exclude local execution plans
+*.tfplan
+
+# DO NOT add .terraform.lock.hcl to this file
+

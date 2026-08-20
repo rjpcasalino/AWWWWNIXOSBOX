@@ -59,11 +59,11 @@ resource "aws_cloudwatch_log_group" "ecs" {
 }
 
 resource "aws_ecs_task_definition" "app" {
-  family                   = var.app_name
+  family                   = "nixos-web-app-micro" # Renamed
   network_mode             = "awsvpc"
   requires_compatibilities = ["FARGATE"]
-  cpu                      = var.task_cpu
-  memory                   = var.task_memory
+  cpu                      = "256" # Minimalist specs
+  memory                   = "512" 
   execution_role_arn       = aws_iam_role.ecs_execution_role.arn
 
   runtime_platform {
@@ -72,27 +72,27 @@ resource "aws_ecs_task_definition" "app" {
   }
 
   container_definitions = jsonencode([{
-    name      = "nixos-app"
-    image     = "${aws_ecr_repository.app.repository_url}:latest"
+    name      = "nixos-app-micro" # Renamed
+    image     = "${aws_ecr_repository.app.repository_url}:micro-latest" # Point to the micro image
     essential = true
     portMappings = [{
       containerPort = var.container_port
       hostPort      = var.container_port
       protocol      = "tcp"
     }]
-    # ENABLES CLOUDWATCH LOGGING:
     logConfiguration = {
       logDriver = "awslogs"
       options = {
         "awslogs-group"         = aws_cloudwatch_log_group.ecs.name
         "awslogs-region"        = var.aws_region
-        "awslogs-stream-prefix" = "ecs"
+        "awslogs-stream-prefix" = "ecs-micro"
       }
     }
   }])
 }
+
 resource "aws_ecs_service" "app" {
-  name            = "nixos-web-service"
+  name            = "nixos-web-service-micro" # Renamed so deploy.sh finds it
   cluster         = aws_ecs_cluster.main.id
   task_definition = aws_ecs_task_definition.app.arn
   desired_count   = 1
@@ -105,11 +105,10 @@ resource "aws_ecs_service" "app" {
   }
 
   load_balancer {
-    target_group_arn = aws_lb_target_group.tg_medium.arn
-    container_name   = "nixos-app"
+    target_group_arn = aws_lb_target_group.tg_micro.arn # Point to the new micro target group
+    container_name   = "nixos-app-micro" # Must match the container definition name
     container_port   = var.container_port
   }
 
-  # Depend on the HTTPS listener we created for the blog
   depends_on = [aws_lb_listener.https]
 }

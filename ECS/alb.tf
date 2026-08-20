@@ -68,6 +68,26 @@ resource "aws_lb_target_group" "tg_medium" {
   }
 }
 
+# target group for the root micro app
+resource "aws_lb_target_group" "tg_micro" {
+  name        = "nixos-ecs-tg-micro"
+  port        = var.container_port
+  protocol    = "HTTP"
+  vpc_id      = aws_vpc.ecs_vpc.id
+  target_type = "ip"
+
+  health_check {
+    path                = "/"
+    port                = tostring(var.container_port)
+    protocol            = "HTTP"
+    matcher             = "200"
+    interval            = 30
+    timeout             = 5
+    healthy_threshold   = 2
+    unhealthy_threshold = 3
+  }
+}
+
 # ==============================================================================
 # 2. Port 80 Listener (HTTP -> Automatically Redirects to HTTPS)
 # ==============================================================================
@@ -88,10 +108,7 @@ resource "aws_lb_listener" "http" {
   }
 }
 
-# ==============================================================================
-# 3. Port 443 Listener (HTTPS -> Forwards to Blog Container)
-# ==============================================================================
-
+# HTTPS listener to default to the micro app
 resource "aws_lb_listener" "https" {
   load_balancer_arn = aws_lb.alb.arn
   port              = 443
@@ -101,8 +118,26 @@ resource "aws_lb_listener" "https" {
 
   default_action {
     type             = "forward"
-    target_group_arn = aws_lb_target_group.tg_medium.arn
+    target_group_arn = aws_lb_target_group.tg_micro.arn
   }
 
   depends_on = [aws_acm_certificate_validation.cert_validation]
 }
+
+# listener rule to route specific subdomains to the blog
+resource "aws_lb_listener_rule" "blog_routing" {
+  listener_arn = aws_lb_listener.https.arn
+  priority     = 100
+
+  action {
+    type             = "forward"
+    target_group_arn = aws_lb_target_group.tg_medium.arn
+  }
+
+  condition {
+    host_header {
+      values = ["blog.rjpc.net"]
+    }
+  }
+}
+
